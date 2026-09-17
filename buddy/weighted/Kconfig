@@ -1,0 +1,40 @@
+if MALLOC_BUDDY_WEIGHTED
+
+config MALLOC_BUDDY_WEIGHTED_MIN_ORDER
+	int "Minimum allocation order"
+	default 0
+	range 0 63
+
+config MALLOC_BUDDY_WEIGHTED_MAX_ORDER
+	int "Maximum allocation order"
+	default 20
+	range 2 63
+
+choice
+	prompt "Free-list policy"
+	default MALLOC_BUDDY_WEIGHTED_FIFO
+
+config MALLOC_BUDDY_WEIGHTED_FIFO
+	bool "FIFO"
+
+config MALLOC_BUDDY_WEIGHTED_LIFO
+	bool "LIFO"
+
+config MALLOC_BUDDY_WEIGHTED_LARGEST_BUDDY
+	bool "Largest buddy"
+
+endchoice
+
+choice
+	prompt "Split policy"
+	default MALLOC_BUDDY_WEIGHTED_SMALLEST
+
+config MALLOC_BUDDY_WEIGHTED_SMALLEST
+	bool "Smallest sufficient buddy"
+
+config MALLOC_BUDDY_WEIGHTED_LARGEST
+	bool "Largest buddy"
+
+endchoice
+
+endif

@@ -1,0 +1,13 @@
+if MALLOC_BUDDY_BINARY
+
+config MALLOC_BUDDY_MIN_ORDER
+	int "Minimum allocation order"
+	default 5
+	range 0 63
+
+config MALLOC_BUDDY_MAX_ORDER
+	int "Maximum allocation order"
+	default 20
+	range 0 63
+
+endif

@@ -1,0 +1,7 @@
+# double/Kconfig
+
+if MALLOC_BUDDY_DOUBLE
+
+# Double-buddy-specific configuration goes here.
+
+endif

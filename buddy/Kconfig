@@ -1,0 +1,37 @@
+menuconfig MALLOC_BUDDY
+	bool "Buddy allocator"
+	help
+	  Enable the buddy memory allocator.
+
+if MALLOC_BUDDY
+
+choice
+	prompt "Buddy algorithm"
+	default MALLOC_BUDDY_BINARY
+	help
+	  Select the buddy allocation algorithm.
+
+	  Buddy algorithms are mutually exclusive. Exactly one
+	  algorithm is selected.
+
+config MALLOC_BUDDY_BINARY
+	bool "Binary buddy"
+	select MALLOC_BUDDY_POWER_OF_TWO
+
+config MALLOC_BUDDY_FIBONACCI
+	bool "Fibonacci buddy"
+
+config MALLOC_BUDDY_WEIGHTED
+	bool "Weighted buddy"
+
+config MALLOC_BUDDY_DOUBLE
+	bool "Double buddy"
+
+endchoice
+
+source "buddy/binary/Kconfig"
+source "buddy/fibonacci/Kconfig"
+source "buddy/weighted/Kconfig"
+source "buddy/double/Kconfig"
+
+endif

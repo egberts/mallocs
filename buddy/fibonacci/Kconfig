@@ -1,0 +1,38 @@
+if MALLOC_BUDDY_FIBONACCI
+
+
+choice
+    prompt "Buddy lookup implementation"
+    default MALLOC_BUDDY_FIBONACCI_LAYOUT
+
+config MALLOC_BUDDY_FIBONACCI_SEARCH
+    bool "Free-list search"
+    help
+      Locate Fibonacci buddies by searching the appropriate
+      free list.
+
+      This implementation is intended for the Wave 1
+      allocator prototype.
+
+config MALLOC_BUDDY_FIBONACCI_LAYOUT
+    bool "Use explicit fibonacci memory layout metadata"
+    help
+      Maintain explicit Fibonacci split metadata.
+
+      Buddy identification does not search the free lists.
+      This implementation is intended for production use.
+
+endchoice
+
+config MALLOC_BUDDY_FIBONACCI_BASE
+    int "Minimum allocation size"
+    default 16
+    range 1 65536
+
+config MALLOC_BUDDY_FIBONACCI_CLASSES
+    int "Number of allocation classes"
+    default 32
+    range 2 128
+
+endif
+

@@ -1,0 +1,7 @@
+mainmenu "Memory Allocator Configuration"
+
+menu "Memory allocation"
+
+source "buddy/Kconfig"
+
+endmenu

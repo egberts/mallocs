@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+
+import kconfiglib
+
+kconf = kconfiglib.Kconfig("Kconfig")
+kconf.load_config(".config")
+
+with open("config.mk", "w") as f:
+    for sym in kconf.unique_defined_syms:
+        if not sym.name:
+            continue
+
+        if sym.type in (kconfiglib.BOOL, kconfiglib.TRISTATE):
+            if sym.str_value in ("y", "m"):
+                f.write(f"CONFIG_{sym.name}={sym.str_value}\n")
+        elif sym.str_value:
+            f.write(f"CONFIG_{sym.name}={sym.str_value}\n")
