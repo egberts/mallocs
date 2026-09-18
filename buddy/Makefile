@@ -1,82 +1,45 @@
+#
 # buddy/Makefile
+#
 
-SUBDIRS :=
+BUDDY_OBJECTS :=
 
-CONFIG    := $(SRCTREE)/.config
-CONFIG_H  := $(BUILDROOT)/config.h
-CONFIG_MK := $(BUILDROOT)/config.mk
-OBJECTS_MK := $(BUILDROOT)/buddy/objects.mk
-
-.DEFAULT_GOAL := all
-
--include $(CONFIG_MK)
-
-$(info == buddy Makefile == )
-$(info CURDIR    = [$(CURDIR)])
-$(info SRCTREE   = [$(SRCTREE)])
-$(info BUILDROOT = [$(BUILDROOT)])
-$(info CONFIG    = [$(CONFIG)])
-$(info CONFIG_H  = [$(CONFIG_H)])
-$(info CONFIG_MK = [$(CONFIG_MK)])
-$(info CONFIG_MALLOC_BUDDY_FIBONACCI_LAYOUT = [$(CONFIG_MALLOC_BUDDY_FIBONACCI_LAYOUT)])
-
-ifneq ($(CONFIG_MALLOC_BUDDY_FIBONACCI),)
-SUBDIRS += fibonacci
+ifeq ($(CONFIG_MALLOC_BUDDY_FIBONACCI),y)
+BUDDY_OBJECTS += \
+	$(BUILDROOT)/buddy/fibonacci/buddy-fibonacci3.o
 endif
 
-ifneq ($(CONFIG_MALLOC_BUDDY_BINARY),)
-SUBDIRS += binary
+ifeq ($(CONFIG_MALLOC_BUDDY_BINARY),y)
+BUDDY_OBJECTS += \
+	$(BUILDROOT)/buddy/binary/buddy-binary.o
 endif
 
-ifneq ($(CONFIG_MALLOC_BUDDY_DOUBLE),)
-SUBDIRS += double
+ifeq ($(CONFIG_MALLOC_BUDDY_DOUBLE),y)
+BUDDY_OBJECTS += \
+	$(BUILDROOT)/buddy/double/buddy-double.o
 endif
 
-ifneq ($(CONFIG_MALLOC_BUDDY_WEIGHTED),)
-SUBDIRS += weighted
+ifeq ($(CONFIG_MALLOC_BUDDY_WEIGHTED),y)
+BUDDY_OBJECTS += \
+	$(BUILDROOT)/buddy/weighted/buddy-weighted.o
 endif
 
-.PHONY: all clean $(SUBDIRS)
+$(BUILDROOT)/buddy/fibonacci/buddy-fibonacci3.o: \
+	$(SRCTREE)/buddy/fibonacci/buddy-fibonacci3.c \
+	$(CONFIG_H)
+	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-all: $(SUBDIRS) $(OBJECTS_MK)
+$(BUILDROOT)/buddy/binary/buddy-binary.o: \
+	$(SRCTREE)/buddy/binary/buddy-binary.c \
+	$(CONFIG_H)
+	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(SUBDIRS):
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy/$@ \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V)
+$(BUILDROOT)/buddy/double/buddy-double.o: \
+	$(SRCTREE)/buddy/double/buddy-double.c \
+	$(CONFIG_H)
+	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(OBJECTS_MK): $(SUBDIRS)
-	@mkdir -p $(dir $@)
-	@printf '%s\n' 'BUDDY_OBJECTS := \' > $@
-	@for dir in $(SUBDIRS); do \
-		case "$$dir" in \
-			fibonacci) \
-				printf '%s\n' '$$(BUDDY_FIBONACCI_OBJECTS)' >> $@ ;; \
-			binary) \
-				printf '%s\n' '$$(BUDDY_BINARY_OBJECTS)' >> $@ ;; \
-			double) \
-				printf '%s\n' '$$(BUDDY_DOUBLE_OBJECTS)' >> $@ ;; \
-			weighted) \
-				printf '%s\n' '$$(BUDDY_WEIGHTED_OBJECTS)' >> $@ ;; \
-		esac; \
-	done
-
-clean:
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy/fibonacci \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V) clean
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy/binary \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V) clean
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy/double \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V) clean
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy/weighted \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V) clean
-	$(RM) $(OBJECTS_MK)
+$(BUILDROOT)/buddy/weighted/buddy-weighted.o: \
+	$(SRCTREE)/buddy/weighted/buddy-weighted.c \
+	$(CONFIG_H)
+	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@

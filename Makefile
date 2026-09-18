@@ -10,13 +10,9 @@ BUILDROOT := $(abspath $(BUILDROOT))
 
 .DEFAULT_GOAL := all
 
-TOOLS := $(SRCTREE)/tools
-
 CONFIG    := $(SRCTREE)/.config
 CONFIG_H  := $(BUILDROOT)/config.h
 CONFIG_MK := $(BUILDROOT)/config.mk
-
-BUDDY_OBJECTS_MK := $(BUILDROOT)/buddy/objects.mk
 
 TARGET := $(BUILDROOT)/mallocs
 
@@ -32,25 +28,32 @@ $(CONFIG_H) $(CONFIG_MK): $(SRCTREE)/Kconfig $(CONFIG)
 -include $(CONFIG_MK)
 
 #
-# Buddy allocator build interface
+# Common compiler flags
 #
 
-$(BUDDY_OBJECTS_MK): $(CONFIG_MK)
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V)
+CPPFLAGS += -I$(BUILDROOT)
+CPPFLAGS += -include $(CONFIG_H)
 
--include $(BUDDY_OBJECTS_MK)
+CFLAGS += -O3
+CFLAGS += -march=native
+CFLAGS += -mtune=native
+CFLAGS += -flto
+CFLAGS += -fomit-frame-pointer
+CFLAGS += -fno-semantic-interposition
+CFLAGS += -Wall
+CFLAGS += -Wextra
 
 #
-# Main program
+# Subsystems
+#
+
+include $(SRCTREE)/buddy/Makefile
+
+#
+# Objects
 #
 
 MAIN_OBJECT := $(BUILDROOT)/main.o
-
-CFLAGS += -I$(BUILDROOT)
-CFLAGS += -include $(CONFIG_H)
 
 $(MAIN_OBJECT): $(SRCTREE)/main.c $(CONFIG_H)
 	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -59,14 +62,18 @@ $(MAIN_OBJECT): $(SRCTREE)/main.c $(CONFIG_H)
 # Final executable
 #
 
-$(TARGET): $(CONFIG_H) $(CONFIG_MK) $(BUDDY_OBJECTS_MK) $(MAIN_OBJECT)
-	$(Q)$(CC) $(CFLAGS) $(MAIN_OBJECT) $(BUDDY_OBJECTS) -o $@
+OBJECTS := \
+	$(MAIN_OBJECT) \
+	$(BUDDY_OBJECTS)
+
+$(TARGET): $(OBJECTS)
+	$(Q)$(CC) $(CFLAGS) $^ -o $@
 
 #
-# User-facing targets
+# Targets
 #
 
-.PHONY: all clean config.h config.mk buddy
+.PHONY: all clean config.h config.mk
 
 all: $(TARGET)
 
@@ -74,11 +81,5 @@ config.h: $(CONFIG_H)
 
 config.mk: $(CONFIG_MK)
 
-buddy: $(BUDDY_OBJECTS_MK)
-
 clean:
-	$(Q)$(RM) $(MAIN_OBJECT) $(TARGET) $(CONFIG_H) $(CONFIG_MK) $(BUDDY_OBJECTS_MK)
-	$(Q)$(MAKE) -C $(SRCTREE)/buddy \
-		SRCTREE=$(SRCTREE) \
-		BUILDROOT=$(BUILDROOT) \
-		V=$(V) clean
+	$(Q)$(RM) $(OBJECTS) $(TARGET) $(CONFIG_H) $(CONFIG_MK)
