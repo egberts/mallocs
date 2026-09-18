@@ -1,7 +1,6 @@
 mainmenu "Memory Allocator Configuration"
 
-menu "Memory allocation"
+source "block-allocator/Kconfig"
+source "extent-manager/Kconfig"
+source "memory-source/Kconfig"
 
-source "buddy/Kconfig"
-
-endmenu

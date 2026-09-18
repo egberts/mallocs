@@ -2,6 +2,16 @@
 
 if MALLOC_BUDDY_DOUBLE
 
-# Double-buddy-specific configuration goes here.
+config MALLOC_BUDDY_DOUBLE_MIN_ORDER
+    int "Minimum allocation order"
+    default 4
+    range 0 31
+
+config MALLOC_BUDDY_DOUBLE_MAX_ORDER
+    int "Maximum allocation order"
+    default 20
+    range 1 31
+
 
 endif
+

@@ -1,10 +1,5 @@
 if MALLOC_BUDDY_FIBONACCI
 
-
-choice
-    prompt "Buddy lookup implementation"
-    default MALLOC_BUDDY_FIBONACCI_LAYOUT
-
 config MALLOC_BUDDY_FIBONACCI_SEARCH
     bool "Free-list search"
     help
@@ -22,8 +17,6 @@ config MALLOC_BUDDY_FIBONACCI_LAYOUT
       Buddy identification does not search the free lists.
       This implementation is intended for production use.
 
-endchoice
-
 config MALLOC_BUDDY_FIBONACCI_BASE
     int "Minimum allocation size"
     default 16
@@ -35,4 +28,3 @@ config MALLOC_BUDDY_FIBONACCI_CLASSES
     range 2 128
 
 endif
-
