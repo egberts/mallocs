@@ -56,7 +56,7 @@ CFLAGS += -Wextra
 # Subsystems
 #
 
-include $(SRCTREE)/buddy/Makefile
+include $(SRCTREE)/block-allocator/Makefile
 
 #
 # Objects
