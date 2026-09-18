@@ -1,81 +1,83 @@
 #
+# Makefile
+#
 
 CC ?= cc
 
-SRCTREE   ?= $(CURDIR)
-BUILDROOT ?= .
+SRCTREE  := $(abspath $(CURDIR))
+BUILDROOT ?= $(SRCTREE)/build
+BUILDROOT := $(abspath $(BUILDROOT))
 
-.DEFAULT_GOAL := mallocs
+.DEFAULT_GOAL := all
 
 TOOLS := $(SRCTREE)/tools
 
-TARGET    := $(BUILDROOT)/mallocs
-CONFIG    := $(BUILDROOT)/.config
+CONFIG    := $(SRCTREE)/.config
 CONFIG_H  := $(BUILDROOT)/config.h
 CONFIG_MK := $(BUILDROOT)/config.mk
 
-CPPFLAGS += -I$(BUILDROOT) -include config.h
+BUDDY_OBJECTS_MK := $(BUILDROOT)/buddy/objects.mk
 
-CFLAGS := -O3 -march=native -mtune=native \
-          -flto -fomit-frame-pointer \
-          -fno-semantic-interposition \
-          -Wall -Wextra
+TARGET := $(BUILDROOT)/mallocs
 
-V ?= 0
+#
+# Configuration
+#
 
-ifeq ($(V),1)
-Q :=
-else
-Q := @
-endif
+$(CONFIG_H) $(CONFIG_MK): $(SRCTREE)/Kconfig $(CONFIG)
+	$(Q)KCONFIG_CONFIG=$(CONFIG) genconfig $(SRCTREE)/Kconfig \
+		--header-path=$(CONFIG_H) \
+		--config-out=$(CONFIG_MK)
 
-# Kconfig-generated Make variables.
 -include $(CONFIG_MK)
-$(info = top-level Makefile = )
-$(info CURDIR    = [$(CURDIR)])
-$(info SRCTREE   = [$(SRCTREE)])
-$(info BUILDROOT = [$(BUILDROOT)])
-$(info CONFIG_MALLOC_BUDDY_FIBONACCI_LAYOUT = [$(CONFIG_MALLOC_BUDDY_FIBONACCI_LAYOUT)])
 
+#
+# Buddy allocator build interface
+#
 
-# Generate config.h from .config.
-$(CONFIG_H): $(CONFIG)
-	$(Q)mkdir -p $(dir $@)
-	$(Q)genconfig $(CONFIG)
-
-# Generate config.mk from .config.
-$(CONFIG_MK): $(CONFIG)
-	$(Q)mkdir -p $(dir $@)
-	$(Q)$(TOOLS)/genmakeconfig $(CONFIG)
-
-# Main program.
-MAIN_OBJECT := $(BUILDROOT)/main.o
-
-$(MAIN_OBJECT): $(SRCTREE)/main.c $(CONFIG_H)
-	$(Q)mkdir -p $(dir $@)
-	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-# The buddy subsystem owns its allocator implementations.
-.PHONY: buddy
-
-buddy:
+$(BUDDY_OBJECTS_MK): $(CONFIG_MK)
 	$(Q)$(MAKE) -C $(SRCTREE)/buddy \
 		SRCTREE=$(SRCTREE) \
 		BUILDROOT=$(BUILDROOT) \
 		V=$(V)
 
-# Final executable.
+-include $(BUDDY_OBJECTS_MK)
+
 #
-# BUDDY_OBJECTS will be supplied by the buddy build interface.
-$(TARGET): $(CONFIG_H) $(CONFIG_MK) $(MAIN_OBJECT) buddy
+# Main program
+#
+
+MAIN_OBJECT := $(BUILDROOT)/main.o
+
+CFLAGS += -I$(BUILDROOT)
+CFLAGS += -include $(CONFIG_H)
+
+$(MAIN_OBJECT): $(SRCTREE)/main.c $(CONFIG_H)
+	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+#
+# Final executable
+#
+
+$(TARGET): $(CONFIG_H) $(CONFIG_MK) $(BUDDY_OBJECTS_MK) $(MAIN_OBJECT)
 	$(Q)$(CC) $(CFLAGS) $(MAIN_OBJECT) $(BUDDY_OBJECTS) -o $@
 
-.PHONY: all clean
+#
+# User-facing targets
+#
+
+.PHONY: all clean config.h config.mk buddy
 
 all: $(TARGET)
 
+config.h: $(CONFIG_H)
+
+config.mk: $(CONFIG_MK)
+
+buddy: $(BUDDY_OBJECTS_MK)
+
 clean:
-	$(Q)$(RM) $(MAIN_OBJECT) $(TARGET) $(CONFIG_H) $(CONFIG_MK)
+	$(Q)$(RM) $(MAIN_OBJECT) $(TARGET) $(CONFIG_H) $(CONFIG_MK) $(BUDDY_OBJECTS_MK)
 	$(Q)$(MAKE) -C $(SRCTREE)/buddy \
 		SRCTREE=$(SRCTREE) \
 		BUILDROOT=$(BUILDROOT) \

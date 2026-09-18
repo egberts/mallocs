@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 
+import sys
+
 import kconfiglib
 
-kconf = kconfiglib.Kconfig("Kconfig")
-kconf.load_config(".config")
+if len(sys.argv) != 3:
+    sys.exit(f"usage: {sys.argv[0]} .config config.mk")
 
-with open("config.mk", "w") as f:
+kconf = kconfiglib.Kconfig("Kconfig")
+kconf.load_config(sys.argv[1])
+
+with open(sys.argv[2], "w") as f:
     for sym in kconf.unique_defined_syms:
         if not sym.name:
             continue
