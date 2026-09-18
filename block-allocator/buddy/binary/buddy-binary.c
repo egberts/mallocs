@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "config.h"
+#include "buddy-binary.h"
 
 /*
  * Binary buddy allocator
@@ -16,70 +18,19 @@
  * The allocator uses one free list per order.
  */
 
-#ifndef CONFIG_MALLOC_BUDDY_MIN_ORDER
-#define CONFIG_MALLOC_BUDDY_MIN_ORDER 5
-#endif
-
-#ifndef CONFIG_MALLOC_BUDDY_MAX_ORDER
-#define CONFIG_MALLOC_BUDDY_MAX_ORDER 20
-#endif
-
-#define BUDDY_MIN_ORDER CONFIG_MALLOC_BUDDY_MIN_ORDER
-#define BUDDY_MAX_ORDER CONFIG_MALLOC_BUDDY_MAX_ORDER
-
-#define BUDDY_MIN_SIZE ((size_t)1 << BUDDY_MIN_ORDER)
-#define BUDDY_MAX_SIZE ((size_t)1 << BUDDY_MAX_ORDER)
-#define BUDDY_ORDERS   (BUDDY_MAX_ORDER - BUDDY_MIN_ORDER + 1)
-
-/*
- * The heap must be naturally aligned to its maximum block size.
- *
- * A real implementation would normally obtain this memory from the
- * surrounding memory-management system rather than use a static array.
- */
-static union {
-    uint8_t bytes[BUDDY_MAX_SIZE];
-    max_align_t alignment;
-} buddy_heap;
-
-
-/*
- * Free-list node.
- *
- * The node occupies the beginning of a free block.
- */
-struct buddy_free {
-    struct buddy_free *next;
-    struct buddy_free *prev;
-};
-
-
-/*
- * Allocation header.
- *
- * This is stored immediately before the address returned to the caller.
- *
- * For a production allocator, the header representation would likely
- * be optimized substantially.
- */
-struct buddy_header {
-    uint8_t order;
-    uint8_t allocated;
-};
 
 
 /*
  * One free list for each block order.
  */
-static struct buddy_free *free_lists[BUDDY_ORDERS];
-
-static bool buddy_initialized;
+struct buddy_free *free_lists[BUDDY_ORDERS];
+bool buddy_initialized;
 
 
 /*
  * Convert an order to a free-list index.
  */
-static inline unsigned
+inline unsigned
 buddy_index(unsigned order)
 {
     return order - BUDDY_MIN_ORDER;
@@ -89,7 +40,7 @@ buddy_index(unsigned order)
 /*
  * Return the block size for an order.
  */
-static inline size_t
+inline size_t
 buddy_size(unsigned order)
 {
     return (size_t)1 << order;
@@ -102,7 +53,7 @@ buddy_size(unsigned order)
  * Because the heap is aligned to BUDDY_MAX_SIZE, XOR with the
  * block size is sufficient.
  */
-static inline uintptr_t
+inline uintptr_t
 buddy_address(uintptr_t address, unsigned order)
 {
     return address ^ buddy_size(order);
@@ -112,7 +63,7 @@ buddy_address(uintptr_t address, unsigned order)
 /*
  * Add a block to the free list for its order.
  */
-static void
+void
 buddy_free_list_add(unsigned order, struct buddy_free *block)
 {
     unsigned index = buddy_index(order);
@@ -130,7 +81,7 @@ buddy_free_list_add(unsigned order, struct buddy_free *block)
 /*
  * Remove a block from its free list.
  */
-static void
+void
 buddy_free_list_remove(unsigned order, struct buddy_free *block)
 {
     unsigned index = buddy_index(order);
@@ -151,7 +102,7 @@ buddy_free_list_remove(unsigned order, struct buddy_free *block)
 /*
  * Find and remove the first block from a free list.
  */
-static struct buddy_free *
+struct buddy_free *
 buddy_free_list_take(unsigned order)
 {
     unsigned index = buddy_index(order);
@@ -167,7 +118,7 @@ buddy_free_list_take(unsigned order)
 /*
  * Initialize the allocator.
  */
-static void
+void
 buddy_init(void)
 {
     struct buddy_free *block;
@@ -191,7 +142,7 @@ buddy_init(void)
  *
  * The allocation header is included in the calculation.
  */
-static unsigned
+unsigned
 buddy_order_for_size(size_t size)
 {
     unsigned order = BUDDY_MIN_ORDER;
@@ -217,7 +168,7 @@ buddy_order_for_size(size_t size)
  * The first half is returned.
  * The second half is placed on the next lower-order free list.
  */
-static struct buddy_free *
+struct buddy_free *
 buddy_split(struct buddy_free *block,
             unsigned order,
             unsigned target_order)

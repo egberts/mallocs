@@ -32,17 +32,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "config.h"
-
-#ifndef CONFIG_MALLOC_BUDDY_FIBONACCI_BASE
-#define CONFIG_MALLOC_BUDDY_FIBONACCI_BASE 16
-#endif
-
-#ifndef CONFIG_MALLOC_BUDDY_FIBONACCI_CLASSES
-#define CONFIG_MALLOC_BUDDY_FIBONACCI_CLASSES 32
-#endif
-
-#define FIB_BASE    CONFIG_MALLOC_BUDDY_FIBONACCI_BASE
-#define FIB_CLASSES CONFIG_MALLOC_BUDDY_FIBONACCI_CLASSES
+#include "buddy-fibonacci3.h"
 
 
 /*
@@ -51,10 +41,10 @@
  * -------------------------------------------------------------------------
  */
 
-static size_t fib_size[FIB_CLASSES];
+size_t fib_size[FIB_CLASSES];
 
 
-static void
+void
 fib_init_sizes(void)
 {
     fib_size[0] = FIB_BASE;
@@ -80,46 +70,15 @@ fib_arena_size(void)
 
 /*
  * -------------------------------------------------------------------------
- * Block header
- * -------------------------------------------------------------------------
- */
-
-struct fib_block {
-    struct fib_block *next;
-    struct fib_block *prev;
-
-    unsigned int order;
-    bool free;
-
-#if defined(CONFIG_MALLOC_BUDDY_FIBONACCI_LAYOUT)
-
-    /*
-     * Explicit layout metadata.
-     *
-     * parent is the Fibonacci block from which this block was split.
-     * sibling is its other child.
-     */
-    struct fib_block *parent;
-    struct fib_block *sibling;
-
-#endif
-};
-
-#define FIB_HEADER_SIZE \
-    (((sizeof(struct fib_block) + FIB_BASE - 1) / FIB_BASE) * FIB_BASE)
-
-
-/*
- * -------------------------------------------------------------------------
  * Allocator state
  * -------------------------------------------------------------------------
  *
  * The arena belongs to the caller. The allocator only retains its address.
  */
 
-static unsigned char *fib_heap;
-static size_t fib_heap_size;
-static bool fib_initialized;
+unsigned char *fib_heap;
+size_t fib_heap_size;
+bool fib_initialized;
 
 
 /*
@@ -128,10 +87,10 @@ static bool fib_initialized;
  * -------------------------------------------------------------------------
  */
 
-static struct fib_block *fib_free_list[FIB_CLASSES];
+struct fib_block *fib_free_list[FIB_CLASSES];
 
 
-static void
+void
 fib_list_insert(unsigned int order, struct fib_block *block)
 {
     block->prev = NULL;
@@ -145,7 +104,7 @@ fib_list_insert(unsigned int order, struct fib_block *block)
 }
 
 
-static void
+void
 fib_list_remove(unsigned int order, struct fib_block *block)
 {
     if (block->prev)
@@ -162,7 +121,7 @@ fib_list_remove(unsigned int order, struct fib_block *block)
 }
 
 
-static struct fib_block *
+struct fib_block *
 fib_list_take(unsigned int order)
 {
     struct fib_block *block = fib_free_list[order];
@@ -180,7 +139,7 @@ fib_list_take(unsigned int order)
  * -------------------------------------------------------------------------
  */
 
-static unsigned int
+unsigned int
 fib_order_for_size(size_t size)
 {
     for (unsigned int order = 0; order < FIB_CLASSES; ++order) {
@@ -200,7 +159,7 @@ fib_order_for_size(size_t size)
 
 #if defined(CONFIG_MALLOC_BUDDY_FIBONACCI_SEARCH)
 
-static struct fib_block *
+struct fib_block *
 fib_find_free(unsigned int order, uintptr_t address)
 {
     for (struct fib_block *block = fib_free_list[order];
@@ -231,7 +190,7 @@ fib_find_free(unsigned int order, uintptr_t address)
  * The free-list search verifies that the candidate sibling actually exists
  * as a free block.
  */
-static struct fib_block *
+struct fib_block *
 fib_find_buddy(struct fib_block *block)
 {
     unsigned int order = block->order;
@@ -287,7 +246,7 @@ fib_find_buddy(struct fib_block *block)
  *
  * No free-list search is necessary.
  */
-static struct fib_block *
+struct fib_block *
 fib_find_buddy(struct fib_block *block)
 {
     struct fib_block *buddy = block->sibling;
@@ -310,7 +269,7 @@ fib_find_buddy(struct fib_block *block)
  * -------------------------------------------------------------------------
  */
 
-static struct fib_block *
+struct fib_block *
 fib_split(struct fib_block *block)
 {
     unsigned int order = block->order;
@@ -429,7 +388,7 @@ fib_init(void *arena, size_t arena_size)
  */
 
 void *
-fib_malloc(size_t size)
+buddy_malloc(size_t size)
 {
     if (!fib_initialized || size == 0)
         return NULL;
@@ -488,7 +447,7 @@ fib_malloc(size_t size)
  */
 
 void
-fib_free(void *ptr)
+buddy_free(void *ptr)
 {
     if (!fib_initialized || !ptr)
         return;

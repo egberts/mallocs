@@ -11,16 +11,24 @@ BUILDROOT := $(abspath $(BUILDROOT))
 .DEFAULT_GOAL := all
 
 CONFIG    := $(SRCTREE)/.config
+CONFIG_K  := $(SRCTREE)/Kconfig
 CONFIG_H  := $(BUILDROOT)/config.h
 CONFIG_MK := $(BUILDROOT)/config.mk
 
 TARGET := $(BUILDROOT)/mallocs
 
+MAIN_OBJECT := $(BUILDROOT)/main.o
+
+#
+# Build area
+#
+$(BUILDROOT):
+	$(Q)mkdir -p $@
+
 #
 # Configuration
 #
-
-$(CONFIG_H) $(CONFIG_MK): $(SRCTREE)/Kconfig $(CONFIG)
+$(CONFIG_H) $(CONFIG_MK): $(CONFIG_K) $(CONFIG) | $(BUILDROOT)
 	$(Q)KCONFIG_CONFIG=$(CONFIG) genconfig $(SRCTREE)/Kconfig \
 		--header-path=$(CONFIG_H) \
 		--config-out=$(CONFIG_MK)
@@ -37,9 +45,10 @@ CPPFLAGS += -include $(CONFIG_H)
 CFLAGS += -O3
 CFLAGS += -march=native
 CFLAGS += -mtune=native
-CFLAGS += -flto
+# CFLAGS += -flto
 CFLAGS += -fomit-frame-pointer
 CFLAGS += -fno-semantic-interposition
+CFLAGS += -fopt-info-inline-optimized-missed
 CFLAGS += -Wall
 CFLAGS += -Wextra
 
@@ -52,10 +61,7 @@ include $(SRCTREE)/buddy/Makefile
 #
 # Objects
 #
-
-MAIN_OBJECT := $(BUILDROOT)/main.o
-
-$(MAIN_OBJECT): $(SRCTREE)/main.c $(CONFIG_H)
+$(MAIN_OBJECT): $(SRCTREE)/main.c $(CONFIG_H) | $(BUILDROOT)
 	$(Q)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 #
