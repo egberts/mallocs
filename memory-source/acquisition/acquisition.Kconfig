@@ -14,9 +14,9 @@ if MEMORY_SOURCE_SYSTEM
 source "memory-source/acquisition/system-supplied/system-supplied.Kconfig"
 endif
 
-config MEMORY_SOURCE_LIBRARY
-    bool "Library supplied"
-    depends on !MEMORY_SOURCE_STATIC && !MEMORY_SOURCE_SYSTEM
-if MEMORY_SOURCE_LIBRARY
-source "memory-source/acquisition/library-supplied/library-supplied.Kconfig"
-endif
+# config MEMORY_SOURCE_LIBRARY
+#     bool "Library supplied"
+#     depends on !MEMORY_SOURCE_STATIC && !MEMORY_SOURCE_SYSTEM
+# if MEMORY_SOURCE_LIBRARY
+# source "memory-source/acquisition/library-supplied/library-supplied.Kconfig"
+# endif

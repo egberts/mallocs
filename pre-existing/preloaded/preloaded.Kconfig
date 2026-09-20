@@ -1,12 +1,13 @@
 
 
-comment "External providers"
+comment "Preloaded malloc()/free()"
 
+if MALLOC_PREEXISTING
 config MEMORY_SOURCE_EXTERNAL_LD_PRELOAD
-    bool "prepare for use with LD_PRELOAD interface only"
+    bool "Prepare for use with LD_PRELOAD interface only"
 
 config MEMORY_SOURCE_EXTERNAL_ADDRESS_CALLS
-    bool "supply call address to malloc()/free()"
+    bool "Use a function address to pre-existing malloc()/free()"
 
 if MEMORY_SOURCE_EXTERNAL_ADDRESS_CALLS
 
@@ -18,5 +19,6 @@ config MEMORY_SOURCE_EXTERNAL_ADDRESS_FREE
     hex "free() function address"
     default 0x0
 
-endif
+endif  # MEMORY_SOURCE_EXTERNAL_ADDRESS_CALLS
+endif  # MALLOC_PREEXISTING
 

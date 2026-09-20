@@ -1,8 +1,12 @@
 mainmenu "Memory Allocator Subsystem Permutator Configuration"
 
 
+source "pre-existing/pre-existing.Kconfig"
+
+if !MALLOC_PREEXISTING
 source "memory-source/memory-source.Kconfig"
 
 source "block-allocator/block-allocator.Kconfig"
 
-source "extent-manager/extent-manager.Kconfig"
+source "extant/extant.Kconfig"
+endif

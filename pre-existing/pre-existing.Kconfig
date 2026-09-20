@@ -1,0 +1,12 @@
+
+
+comment "Pre-existing mallocs()"
+
+config MALLOC_PREEXISTING
+  bool "Use pre-existing malloc() library"
+
+if MALLOC_PREEXISTING
+source "pre-existing/libraries/libraries.Kconfig"
+
+source "pre-existing/preloaded/preloaded.Kconfig"
+endif

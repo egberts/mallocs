@@ -1,0 +1,32 @@
+comment "Extant managers - How is already-existing allocator memory organized, managed, transferred, reclaimed, or synchronized?"
+
+config MALLOC_EXTANT_BUDDY
+  bool "Buddy"
+
+config MALLOC_EXTANT_POOL
+  bool "Pool"
+
+config MALLOC_EXTANT_SPAN
+  bool "Span"
+
+config MALLOC_EXTANT_FREESPACE_STRUCTURE
+  bool "Free-space structure"
+
+config MALLOC_EXTANT_QUEUE
+  bool "Queue"
+
+config MALLOC_EXTANT_OWNERSHIP
+  bool "Ownership/encoding"
+
+config MALLOC_EXTANT_LOCAL_ALLOCATIONS
+  bool "Local allocation buffers"
+
+config MALLOC_EXTANT_ARENAS
+  bool "Arenas"
+
+config MALLOC_EXTANT_RECLAMATION
+  bool "Reclamation"
+
+config MALLOC_EXTANT_SYNCHRONIZATION
+  bool "Synchronization"
+

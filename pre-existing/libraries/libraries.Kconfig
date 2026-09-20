@@ -1,0 +1,55 @@
+
+
+choice
+        prompt "Existing malloc libraries"
+        default MALLOC_PREEXISTING_GLIBC
+        help
+          Select the pre-existing malloc library.
+
+          Malloc algorithms are mutually exclusive. Exactly one
+          algorithm is selected.
+
+config MALLOC_PREEXISTING_CTMALLOC
+    bool "ctmalloc"
+
+config MALLOC_PREEXISTING_DLMALLOC
+    bool "dlmalloc"
+
+config MALLOC_PREEXISTING_GLIBC
+    bool "glibc"
+
+config MALLOC_PREEXISTING_HOARD
+    bool "Hoard"
+
+config MALLOC_PREEXISTING_JEMALLOC
+    bool "jemalloc"
+
+config MALLOC_PREEXISTING_LIBUMEM
+    bool "libumem (Solaris)"
+
+config MALLOC_PREEXISTING_MTMALLOC
+    bool "mtmalloc"
+
+config MALLOC_PREEXISTING_NEDMALLOC
+    bool "nedmalloc"
+
+config MALLOC_PREEXISTING_PHKMALLOC3
+    bool "phkmalloc3"
+
+config MALLOC_PREEXISTING_PTMALLOC3
+    bool "ptmalloc3"
+
+config MALLOC_PREEXISTING_SFMALLOC
+    bool "sfmalloc"
+
+config MALLOC_PREEXISTING_SNMALLOC
+    bool "snmalloc"
+
+config MALLOC_PREEXISTING_SSMALLOC
+    bool "ssmalloc"
+
+config MALLOC_PREEXISTING_TCMALLOC
+    bool "TCmalloc"
+
+
+endchoice

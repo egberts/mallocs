@@ -14,11 +14,6 @@ config MEMORY_SOURCE_SYSTEM_SBRK
     help
       Trying sbrk()
 
-config MEMORY_SOURCE_SYSTEM_GLIB_MALLOC
-    bool "Standard glib malloc()"
-    help
-      Trying glib malloc()
-
 config MEMORY_SOURCE_SYSTEM_LINUX_SHMEM
     bool "Linux shared memory, by interface"
     help

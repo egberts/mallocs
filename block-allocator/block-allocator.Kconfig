@@ -1,17 +1,11 @@
 
-comment "Block allocators"
+comment "Block allocators - Given memory available for allocation, how is an allocatable block selected and represented?"
 
-config MALLOC_BLOCK_ALLOCATOR_BUDDY
-        bool "Buddy block allocator"
-if MALLOC_BLOCK_ALLOCATOR_BUDDY
-source "block-allocator/buddy/buddy.Kconfig"
-endif
+config MALLOC_BLOCK_SIZE_SELECTORS
+        bool "Size selectors"
 
-config MALLOC_BLOCK_ALLOCATOR_TREES
-        bool "Trees block allocator"
-if MALLOC_BLOCK_ALLOCATOR_TREES
-source "block-allocator/trees/trees.Kconfig"
-endif
+config MALLOC_BLOCK_BIN
+        bool "Bin selectors (hashed)"
 
 config MALLOC_BLOCK_ALLOCATOR_SEGREGATED_FREE_LIST
         bool "Segregated free list allocator"
@@ -19,10 +13,17 @@ if MALLOC_BLOCK_ALLOCATOR_SEGREGATED_FREE_LIST
 source "block-allocator/segregated-free-list/segregated.Kconfig"
 endif
 
+
 config MALLOC_BLOCK_ALLOCATOR_BITMAP
         bool "Bitmap block allocator"
 if MALLOC_BLOCK_ALLOCATOR_BITMAP
 source "block-allocator/bitmap/bitmap.Kconfig"
+endif
+
+config MALLOC_BLOCK_ALLOCATOR_TREES
+        bool "Trees block allocator"
+if MALLOC_BLOCK_ALLOCATOR_TREES
+source "block-allocator/trees/trees.Kconfig"
 endif
 
 config MALLOC_BLOCK_ALLOCATOR_HYBRIDS
