@@ -1,0 +1,21 @@
+
+comment "Established  malloc libraries"
+
+config MEMORY_SOURCE_LIBRARY_JEMALLOC
+    bool "jemalloc()"
+# source "memory-source/acquisition/statically/global-static/global-static.Kconfig"
+
+config MEMORY_SOURCE_LIBRARY_MIMALLOC
+    bool "mimalloc()"
+    help
+      Trying sbrk()
+
+config MEMORY_SOURCE_LIBRARY_TCMALLOC
+    bool "tcmalloc()"
+    help
+      Trying glib malloc()
+
+config MEMORY_SOURCE_LIBRARY_SEMALLOC
+    bool "S.E. malloc() algorithm"
+    help
+      Trying Linux /dev/shmem()

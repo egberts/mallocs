@@ -1,0 +1,22 @@
+
+comment "Acquisition methods - How did I get it?"
+
+config MEMORY_SOURCE_STATIC
+    bool "Statically provisioned"
+if MEMORY_SOURCE_STATIC
+source "memory-source/acquisition/statically/statically.Kconfig"
+endif
+
+config MEMORY_SOURCE_SYSTEM
+    bool "System supplied"
+    depends on !MEMORY_SOURCE_STATIC
+if MEMORY_SOURCE_SYSTEM
+source "memory-source/acquisition/system-supplied/system-supplied.Kconfig"
+endif
+
+config MEMORY_SOURCE_LIBRARY
+    bool "Library supplied"
+    depends on !MEMORY_SOURCE_STATIC && !MEMORY_SOURCE_SYSTEM
+if MEMORY_SOURCE_LIBRARY
+source "memory-source/acquisition/library-supplied/library-supplied.Kconfig"
+endif

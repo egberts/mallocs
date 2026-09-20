@@ -1,0 +1,20 @@
+#if MALLOC_BLOCK_ALLOCATOR_HYBRIDS
+
+choice
+        prompt "Hybrid allocators"
+        default MALLOC_HYBRID_EASY
+        help
+          Select the Hybrid allocator algorithm.
+
+          Hybrid allocator algorithms are mutually exclusive. Exactly one
+          algorithm is selected.
+
+config MALLOC_HYBRIDS_EASY
+        bool "Easy hybrid"
+
+endchoice
+
+# source "block-allocator/hybrid/easy/easy.Kconfig"
+
+
+#endif

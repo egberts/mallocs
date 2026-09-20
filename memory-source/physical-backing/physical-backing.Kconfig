@@ -1,0 +1,27 @@
+
+comment "Physical backings - what ultimately provides storage for the contents?"
+
+config MEMORY_SOURCE_BACKING_VOLATILE
+    bool "Volatile memory"
+if MEMORY_SOURCE_BACKING_VOLATILE
+source "memory-source/physical-backing/volatile/volatile.Kconfig"
+endif
+
+config MEMORY_SOURCE_BACKING_PERSISTENT
+    bool "Persistent memory"
+    depends on !MEMORY_SOURCE_BACKING_VOLATILE
+if MEMORY_SOURCE_BACKING_PERSISTENT
+source "memory-source/physical-backing/persistent/persistent.Kconfig"
+endif
+
+config MEMORY_SOURCE_BACKING_STORAGE
+    bool "Storage backed"
+if MEMORY_SOURCE_BACKING_STORAGE
+source "memory-source/physical-backing/storage-backed/storage-backed.Kconfig"
+endif
+
+config MEMORY_SOURCE_BACKING_EXTERNAL
+    bool "Externally defined"
+if MEMORY_SOURCE_BACKING_EXTERNAL
+source "memory-source/physical-backing/externally-defined/externally-defined.Kconfig"
+endif

@@ -1,0 +1,47 @@
+
+comment "Locality - where is it?"
+
+# ├── locality (where is it?)
+# │   → Where is the resource relative to the consumer?
+# │   ├── CPU_local
+# │   │   └── associated with a specific CPU
+# │   ├── NUMA_node_local
+# │   │   └── local memory node
+# │   ├── remote_NUMA
+# │   │   └── memory on another NUMA node
+# │   ├── interleaved
+# │   │   └── distributed across multiple nodes
+# │   ├── device_local
+# │   │   └── local to a device/accelerator
+# │   ├── shared
+# │   │   └── intentionally accessible by multiple consumers
+# │   └── unspecified
+# │       └── allocator has no placement information
+
+choice
+    prompt "Memory locality"
+
+config MEMORY_SOURCE_LOCALITY_CPU
+    bool "CPU local"
+
+config MEMORY_SOURCE_LOCALITY_NUMA
+    bool "NUMA node local"
+
+config MEMORY_SOURCE_LOCALITY_REMOTE_NUMA
+    bool "Remote NUMA"
+
+config MEMORY_SOURCE_LOCALITY_INTERLEAVED
+    bool "Interleaved"
+
+config MEMORY_SOURCE_LOCALITY_DEVICE
+    bool "Device local"
+
+config MEMORY_SOURCE_LOCALITY_SHARED
+    bool "Shared"
+
+config MEMORY_SOURCE_LOCALITY_UNSPECIFIED
+    bool "Unspecified"
+
+endchoice
+
+

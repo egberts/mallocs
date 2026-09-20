@@ -1,0 +1,20 @@
+
+
+comment "Address space"
+
+choice
+    prompt "Address space"
+
+config MEMORY_SOURCE_ADDRESS_PHYSICAL
+    bool "Physical address"
+
+config MEMORY_SOURCE_ADDRESS_VIRTUAL
+    bool "Process virtual address"
+
+config MEMORY_SOURCE_ADDRESS_DEVICE
+    bool "Device address"
+
+config MEMORY_SOURCE_ADDRESS_OPAQUE
+    bool "Opaque handle"
+
+endchoice

@@ -1,0 +1,8 @@
+
+#
+# │   ├── persistent_memory
+# │   │
+# │   │   ├── persistent_memory_device
+# │   │   ├── NVDIMM
+# │   │   └── other_persistent_memory
+#

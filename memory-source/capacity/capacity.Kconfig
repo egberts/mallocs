@@ -1,0 +1,57 @@
+
+comment "Capacity - how much can I get?"
+
+# └── capacity (how much can I get?)
+#     │   → How much can the source provide?
+#     ├── fixed
+#     │   └── capacity established at initialization
+#     ├── bounded
+#     │   ├── minimum
+#     │   ├── maximum
+#     │   └── configured_limit
+#     ├── dynamically_expandable
+#     │   ├── grow_on_demand
+#     │   └── shrinkable
+#     ├── externally_managed
+#     │   └── provider determines availability
+#     ├── resource_pool_limited
+#     │   ├── huge_page_pool
+#     │   ├── device_pool
+#     │   └── reserved_pool
+#     └── system_limited
+#         ├── physical_memory
+#         ├── address_space
+#         ├── process_limit
+#         └── system_policy
+#     └── sharing
+#         ├── private
+#         ├── shared
+#         ├── process_shared
+#         ├── thread_shared
+#         ├── device_shared
+#         └── externally_shared
+
+comment "Capacity"
+
+choice
+    prompt "Memory capacity"
+
+config MEMORY_SOURCE_CAPACITY_FIXED
+    bool "Fixed"
+
+config MEMORY_SOURCE_CAPACITY_BOUNDED
+    bool "Bounded"
+
+config MEMORY_SOURCE_CAPACITY_DYNAMIC
+    bool "Dynamically expandable"
+
+config MEMORY_SOURCE_CAPACITY_EXTERNAL
+    bool "Externally managed"
+
+config MEMORY_SOURCE_CAPACITY_POOL
+    bool "Resource pool limited"
+
+config MEMORY_SOURCE_CAPACITY_SYSTEM
+    bool "System limited"
+
+endchoice

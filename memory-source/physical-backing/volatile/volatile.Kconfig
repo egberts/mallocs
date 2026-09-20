@@ -1,0 +1,30 @@
+
+comment "Statically provided - Storage exists before the allocator requests it."
+if MEMORY_SOURCE_STATIC
+
+config MEMORY_SOURCE_GLOBAL_STATIC_OBJECT
+    bool "Global static object"
+    depends on !MEMORY_SOURCE_GLOBAL_OBJECT && !MEMORY_SOURCE_STATICALLY_RESERVED_ARRAY
+    help
+      static char heap[SIZE]
+# source "memory-source/acquisition/statically/global-static/global-static.Kconfig"
+
+config MEMORY_SOURCE_GLOBAL_OBJECT
+    bool "Global object"
+    help
+      char heap[SIZE]
+# source "memory-source/acquisition/statically/global-object/global-object.Kconfig"
+
+config MEMORY_SOURCE_STATICALLY_RESERVED_ARRAY
+    bool "Statically reserved array"
+    help
+      char heap[SIZE]
+# source "memory-source/acquisition/statically/static-array/static-array.Kconfig"
+
+config MEMORY_SOURCE_LINKER_DEFINED_REGION
+    bool "Linker defined region"
+    help
+      linker script / reserved address range
+# source "memory-source/acquisition/statically/linker-defined/linker-defined.Kconfig"
+
+endif

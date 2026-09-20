@@ -48,7 +48,7 @@ CFLAGS += -mtune=native
 # CFLAGS += -flto
 CFLAGS += -fomit-frame-pointer
 CFLAGS += -fno-semantic-interposition
-CFLAGS += -fopt-info-inline-optimized-missed
+# CFLAGS += -fopt-info-inline-optimized-missed
 CFLAGS += -Wall
 CFLAGS += -Wextra
 

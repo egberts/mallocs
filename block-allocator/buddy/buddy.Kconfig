@@ -1,6 +1,4 @@
-if MALLOC_BLOCK_ALLOCATOR_BUDDY
-
-comment "Buddy allocators"
+#if MALLOC_BLOCK_ALLOCATOR_BUDDY
 
 choice
         prompt "Buddy algorithm"
@@ -25,18 +23,10 @@ config MALLOC_BUDDY_DOUBLE
 
 endchoice
 
-#if MALLOC_BUDDY_BINARY
-source "block-allocator/buddy/binary/Kconfig"
-#endif
-#if MALLOC_BUDDY_FIBONACCI
-source "block-allocator/buddy/fibonacci/Kconfig"
-#endif
-#if MALLOC_BUDDY_WEIGHTED
-source "block-allocator/buddy/weighted/Kconfig"
-#endif
-#if MALLOC_BUDDY_DOUBLE
-source "block-allocator/buddy/double/Kconfig"
-#endif
+source "block-allocator/buddy/binary/binary.Kconfig"
+source "block-allocator/buddy/fibonacci/fibonacci.Kconfig"
+source "block-allocator/buddy/weighted/weighted.Kconfig"
+source "block-allocator/buddy/double/double.Kconfig"
 
 
-endif
+#endif

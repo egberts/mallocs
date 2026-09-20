@@ -1,0 +1,11 @@
+
+comment "Memory source"
+
+source "memory-source/acquisition/acquisition.Kconfig"
+
+source "memory-source/physical-backing/physical-backing.Kconfig"
+
+source "memory-source/locality/locality.Kconfig"
+
+source "memory-source/capacity/capacity.Kconfig"
+

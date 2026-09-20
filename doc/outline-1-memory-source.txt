@@ -1,0 +1,185 @@
+﻿memory_source
+
+├── acquisition_method (how did I get it?)
+│
+│   → How is memory obtained?
+│
+│   ├── statically_provisioned
+│   │
+│   │   → Storage exists before the allocator requests it.
+│   │
+│   │   ├── global_static_object
+│   │   │   └── static char heap[SIZE]
+│   │   │
+│   │   ├── global_object
+│   │   │   └── char heap[SIZE]
+│   │   │
+│   │   ├── statically_reserved_array
+│   │   │   └── char heap[SIZE]
+│   │   │
+│   │   └── linker_defined_region
+│   │       └── linker script / reserved address range
+│   │
+│   ├── system_supplied
+│   │
+│   │   → Operating system provides or maps the resource.
+│   │
+│   │   ├── mmap
+│   │   │   ├── anonymous - mmap anonymous
+    acquisition: system_supplied
+    backing:    volatile/system_RAM
+    address:    process_virtual_address
+mmap DAX
+    acquisition: system_supplied
+    backing:    persistent_memory
+    address:    process_virtual_address
+│   │   │   ├── file
+│   │   │   ├── shared_memory
+│   │   │   ├── huge_pages
+│   │   │   └── device_mapping - mmap device
+    acquisition: system_supplied
+    backing:    device_memory
+    address:    process_virtual_address
+│   │   │
+│   │   ├── sbrk
+│   │   │
+│   │   ├── system_allocator
+│   │   │   └── malloc/calloc/realloc/etc.
+│   │   │
+│   │   └── other_system_interface
+│   │       ├── shared_memory
+│   │       ├── device_interface
+│   │       └── platform_specific_interface
+│   │
+│   └── library_supplied
+│       │
+│       │   → Another software component provides the resource.
+│       │
+│       ├── allocator_backend
+│       │   ├── jemalloc
+│       │   ├── mimalloc
+│       │   ├── tcmalloc
+│       │   └── other_allocator
+│       │
+│       └── external_memory_provider
+│           ├── caller_supplied
+│           ├── library_supplied
+│           └── subsystem_supplied
+│
+├── physical_backing (what stores it?)
+│
+│   → What ultimately provides storage for the contents?
+│
+│   ├── volatile_memory
+│   │
+│   │   ├── system_RAM
+│   │   ├── NUMA_RAM
+│   │   ├── dedicated_RAM
+│   │   └── device_RAM
+│   │
+│   ├── persistent_memory
+│   │
+│   │   ├── persistent_memory_device
+│   │   ├── NVDIMM
+│   │   └── other_persistent_memory
+│   │
+│   ├── storage_backed
+│   │
+│   │   ├── regular_file
+│   │   ├── filesystem_object
+│   │   ├── tmpfs
+│   │   ├── shared_memory_object
+│   │   ├── NVMe
+│   │   ├── MMC
+│   │   ├── flash
+│   │   ├── disk
+│   │   └── other_storage
+│   │
+│   └── externally_defined
+│       ├── provider_defined
+│       ├── device_defined
+│       └── unknown
+│
+├── address_space (how do I address it?)
+│
+│   → How does the allocator identify/access the resource?
+│
+│   ├── physical_address
+│   │   └── physical address / address range
+│   │
+│   ├── process_virtual_address
+│   │   ├── directly mapped
+│   │   ├── demand_mapped
+│   │   └── dynamically_mapped
+│   │
+│   ├── device_address
+│   │   ├── device_virtual_address
+│   │   ├── bus_address
+│   │   └── device_specific_address
+│   │
+│   └── opaque_handle
+│       ├── descriptor
+│       ├── object_handle
+│       └── provider_specific_handle
+│
+├── locality (where is it?)
+│
+│   → Where is the resource relative to the consumer?
+│
+│   ├── CPU_local
+│   │   └── associated with a specific CPU
+│   │
+│   ├── NUMA_node_local
+│   │   └── local memory node
+│   │
+│   ├── remote_NUMA
+│   │   └── memory on another NUMA node
+│   │
+│   ├── interleaved
+│   │   └── distributed across multiple nodes
+│   │
+│   ├── device_local
+│   │   └── local to a device/accelerator
+│   │
+│   ├── shared
+│   │   └── intentionally accessible by multiple consumers
+│   │
+│   └── unspecified
+│       └── allocator has no placement information
+│
+└── capacity (how much can I get?)
+    │
+    │   → How much can the source provide?
+    │
+    ├── fixed
+    │   └── capacity established at initialization
+    │
+    ├── bounded
+    │   ├── minimum
+    │   ├── maximum
+    │   └── configured_limit
+    │
+    ├── dynamically_expandable
+    │   ├── grow_on_demand
+    │   └── shrinkable
+    │
+    ├── externally_managed
+    │   └── provider determines availability
+    │
+    ├── resource_pool_limited
+    │   ├── huge_page_pool
+    │   ├── device_pool
+    │   └── reserved_pool
+    │
+    └── system_limited
+        ├── physical_memory
+        ├── address_space
+        ├── process_limit
+        └── system_policy
+    └── sharing
+        ├── private
+        ├── shared
+        ├── process_shared
+        ├── thread_shared
+        ├── device_shared
+        └── externally_shared

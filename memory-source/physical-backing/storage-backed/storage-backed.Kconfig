@@ -1,0 +1,14 @@
+
+#
+# │   ├── storage_backed
+# │   │
+# │   │   ├── regular_file
+# │   │   ├── filesystem_object
+# │   │   ├── tmpfs
+# │   │   ├── shared_memory_object
+# │   │   ├── NVMe
+# │   │   ├── MMC
+# │   │   ├── flash
+# │   │   ├── disk
+# │   │   └── other_storage
+#

@@ -1,6 +1,8 @@
-mainmenu "Memory Allocator Configuration"
+mainmenu "Memory Allocator Subsystem Permutator Configuration"
 
-source "block-allocator/Kconfig"
-source "extent-manager/Kconfig"
-source "memory-source/Kconfig"
 
+source "memory-source/memory-source.Kconfig"
+
+source "block-allocator/block-allocator.Kconfig"
+
+source "extent-manager/extent-manager.Kconfig"
