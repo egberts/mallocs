@@ -52,7 +52,7 @@ A typical build and test cycle:
 ```sh
 git clone https://github.com/egberts/mallocs
 cd mallocs
-makeconfig
-make
-build/mallocs
+menuconfig      # configure
+make            # build
+build/mallocs   # execute
 ```
