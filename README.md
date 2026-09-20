@@ -3,14 +3,10 @@
 ALPHA release, not for general usage.  Still in discrete breakdown stage.
 
 ## Intro
-  The goal is to breakdown `malloc()`/`free()` into discrete
-  components, making all variants independently available for
-  combinatorial benchmarkings.
+The goal is to breakdown `malloc()`/`free()` into discrete components, making all variants independently available for combinatorial benchmarkings.
 
 ## Overview
-    Breakdown into discrete components enables the following
-    philosophy of compositional approach to experimenting
-    and testing new `malloc()` variants:
+Breakdown into discrete components enables the following philosophy of compositional approach to experimenting and testing new `malloc()` variants:
 
 
 ```text
