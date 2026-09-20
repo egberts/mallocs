@@ -1,5 +1,7 @@
 # mallocs
 
+ALPHA release, not for general usage.  Still in discrete breakdown stage.
+
 ## Intro
   The goal is to breakdown `malloc()`/`free()` into discrete
   components, making all variants independently available for
